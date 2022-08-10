@@ -99,9 +99,10 @@ module Keycloak
 
     def self.token_attribute(headers, attribute_name)
       decoded_token = Keycloak.service.decode_and_verify(read_token_from_headers(headers))
-      return { error: 'No attribute found' } if decoded_token.select { |attr| attr[attribute_name] }.empty?
+      raise TokenError.attribute_not_found(read_token_from_headers(headers)) if decoded_token.select { |attr| attr[attribute_name] }.empty?
 
-      decoded_token.select { |attr| attr[attribute_name] }
+      { attribute_name => decoded_token.select { |attr| attr[attribute_name] }.first[attribute_name] }
+      # decoded_token.select { |attr| attr[attribute_name] }
     end
   end
 end

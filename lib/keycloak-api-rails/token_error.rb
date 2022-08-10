@@ -24,6 +24,10 @@ class TokenError < StandardError
     TokenError.new(token, :expired, 'JWT token is expired', nil)
   end
 
+  def self.attribute_not_found(token)
+    TokenError.new(token, :attribute_not_found, 'JWT token attribute not found', nil)
+  end
+
   def self.unknown(_token)
     TokenError.new
   end
