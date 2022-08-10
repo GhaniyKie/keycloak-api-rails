@@ -56,7 +56,7 @@ module Keycloak
     end
 
     def expired?(token)
-      token_expiration = Time.at(token["exp"]).to_datetime
+      token_expiration = Time.at(token.first["exp"]).to_datetime
       token_expiration < Time.now + @token_expiration_tolerance_in_seconds.seconds
     end
   end
