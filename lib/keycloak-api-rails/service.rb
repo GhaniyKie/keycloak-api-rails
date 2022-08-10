@@ -11,10 +11,11 @@ module Keycloak
     def decode_and_verify(token)
       unless token.nil? || token&.empty?
         public_key    = @key_resolver.find_public_keys
-        decoded_token = JSON::JWT.decode(token, public_key)
+        # decoded_token = JSON::JWT.decode(token, public_key)
+        decoded_token = JWT.decode(token, public_key, true, { algorithm: "RS256" })
 
         unless expired?(decoded_token)
-          decoded_token.verify!(public_key)
+          # decoded_token.verify!(public_key)
           decoded_token
         else
           raise TokenError.expired(token)
@@ -22,11 +23,14 @@ module Keycloak
       else
         raise TokenError.no_token(token)
       end
-    rescue JSON::JWT::VerificationFailed => e
+    # rescue JSON::JWT::VerificationFailed => e
+    rescue JWT::VerificationError => e
       raise TokenError.verification_failed(token, e)
-    rescue JSON::JWK::Set::KidNotFound => e
+    # rescue JSON::JWK::Set::KidNotFound => e
+    rescue JWT::InvalidJti => e
       raise TokenError.verification_failed(token, e)
-    rescue JSON::JWT::InvalidFormat
+    # rescue JSON::JWT::InvalidFormat
+    rescue JWT::DecodeError => e
       raise TokenError.invalid_format(token, e)
     end
 

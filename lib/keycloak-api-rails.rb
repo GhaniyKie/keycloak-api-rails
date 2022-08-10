@@ -1,5 +1,6 @@
 require "logger"
-require "json/jwt"
+# require "json/jwt"
+require "jwt"
 require "uri"
 require "date"
 require "net/http"

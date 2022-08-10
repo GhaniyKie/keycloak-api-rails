@@ -102,7 +102,12 @@ module Keycloak
     end
 
     def self.token_introspection_attribute(headers, attribute_name)
+      return { error: "No attribute found" } unless token_introspection(headers).key?(attribute_name)
+
       { "#{attribute_name}": token_introspection(headers).fetch(attribute_name, nil) }
+    end
+
+    def self.url_login_redirect()
     end
   end
 end
