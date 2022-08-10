@@ -13,7 +13,6 @@ module Keycloak
         public_key    = @key_resolver.find_public_keys
         # decoded_token = JSON::JWT.decode(token, public_key)
         decoded_token = JWT.decode(token, public_key, true, { algorithm: "RS256" })
-        print decoded_token
         unless expired?(decoded_token)
           # decoded_token.verify!(public_key)
           decoded_token
