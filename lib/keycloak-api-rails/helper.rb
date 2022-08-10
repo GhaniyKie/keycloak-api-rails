@@ -11,10 +11,6 @@ module Keycloak
     TOKEN_KEY                    = "keycloak:token"
     QUERY_STRING_TOKEN_KEY       = "authorizationToken"
 
-    def self.decoded_token(headers)
-      Keycloak.service.decode_and_verify(read_token_from_headers(headers))
-    end
-
     def self.current_user_id(env)
       env[CURRENT_USER_ID_KEY]
     end
@@ -99,6 +95,14 @@ module Keycloak
 
     def self.read_token_from_headers(headers)
       headers["HTTP_AUTHORIZATION"]&.gsub(/^Bearer /, "") || ""
+    end
+
+    def self.token_introspection(headers)
+      Keycloak.service.decode_and_verify(read_token_from_headers(headers))
+    end
+
+    def self.token_introspection_attribute(headers, attribute_name)
+      { "#{attribute_name}": token_introspection(headers).fetch(attribute_name, nil) }
     end
   end
 end
