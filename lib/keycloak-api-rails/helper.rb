@@ -12,7 +12,7 @@ module Keycloak
     QUERY_STRING_TOKEN_KEY       = "authorizationToken"
 
     def self.decoded_token
-      Keycloak.service.decode_and_verify(token)
+      Keycloak.service.decode_and_verify(keycloak_token)
     end
 
     def self.current_user_id(env)
