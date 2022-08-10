@@ -37,7 +37,7 @@ module Keycloak
       Helper.assign_realm_roles(env, decoded_token)
       Helper.assign_resource_roles(env, decoded_token)
       Helper.assign_keycloak_token(env, decoded_token)
-      Helper.decoded_token(decoded_token)
+      Helper.decoded_token = decoded_token
       @app.call(env)
     end
 
