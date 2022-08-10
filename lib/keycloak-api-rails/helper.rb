@@ -11,7 +11,7 @@ module Keycloak
     TOKEN_KEY                    = "keycloak:token"
     QUERY_STRING_TOKEN_KEY       = "authorizationToken"
 
-    def decoded_token
+    def self.decoded_token
       Keycloak.service.decode_and_verify(token)
     end
 
