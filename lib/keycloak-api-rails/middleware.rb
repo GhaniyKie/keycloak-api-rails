@@ -1,14 +1,13 @@
 module Keycloak
-
   class Middleware
     def initialize(app)
       @app = app
     end
 
     def call(env)
-      method = env["REQUEST_METHOD"]
-      path   = env["PATH_INFO"]
-      uri    = env["REQUEST_URI"]
+      method = env['REQUEST_METHOD']
+      path   = env['PATH_INFO']
+      uri    = env['REQUEST_URI']
 
       if service.need_authentication?(method, path, env)
         logger.debug("Start authentication for #{method} : #{path}")
@@ -25,7 +24,7 @@ module Keycloak
 
     def authentication_failed(message)
       logger.info(message)
-      [401, {"Content-Type" => "application/json"}, [ { error: message }.to_json]]
+      [401, { 'Content-Type' => 'application/json' }, [{ error: message }.to_json]]
     end
 
     def authentication_succeeded(env, decoded_token)
