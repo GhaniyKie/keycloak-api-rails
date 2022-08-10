@@ -27,7 +27,7 @@ module Keycloak
     rescue JWT::VerificationError => e
       raise TokenError.verification_failed(token, e)
     # rescue JSON::JWK::Set::KidNotFound => e
-    rescue JWT::InvalidJti => e
+    rescue JWT::InvalidJtiError => e
       raise TokenError.verification_failed(token, e)
     # rescue JSON::JWT::InvalidFormat
     rescue JWT::DecodeError => e
