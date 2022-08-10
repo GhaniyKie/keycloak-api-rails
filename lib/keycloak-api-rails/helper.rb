@@ -11,8 +11,8 @@ module Keycloak
     TOKEN_KEY                    = "keycloak:token"
     QUERY_STRING_TOKEN_KEY       = "authorizationToken"
 
-    def self.decoded_token(env)
-      Keycloak.service.decode_and_verify(env[TOKEN_KEY])
+    def self.decoded_token(headers)
+      Keycloak.service.decode_and_verify(read_token_from_headers(headers))
     end
 
     def self.current_user_id(env)
@@ -80,10 +80,6 @@ module Keycloak
 
     def self.current_user_custom_attributes(env)
       env[CURRENT_USER_ATTRIBUTES]
-    end
-
-    def self.current_user_roles(env)
-      env[ROLES_KEY]
     end
 
     def self.read_token_from_query_string(uri)
