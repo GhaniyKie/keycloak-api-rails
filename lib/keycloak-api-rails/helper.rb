@@ -11,6 +11,10 @@ module Keycloak
     TOKEN_KEY                    = "keycloak:token"
     QUERY_STRING_TOKEN_KEY       = "authorizationToken"
 
+    def self.decoded_token(decoded_token)
+      return decoded_token
+    end
+
     def self.current_user_id(env)
       env[CURRENT_USER_ID_KEY]
     end
