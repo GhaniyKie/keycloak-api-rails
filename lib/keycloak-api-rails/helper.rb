@@ -100,8 +100,8 @@ module Keycloak
       headers['HTTP_AUTHORIZATION']&.gsub(/^Bearer /, '') || ''
     end
 
-    def self.token_attribute(env, attribute_name)
-      decoded_token = Keycloak.service.decode_and_verify(keycloak_token(env))
+    def self.token_attribute(token, attribute_name)
+      decoded_token = Keycloak.service.decode_and_verify(token)
       attribute = decoded_token.select { |attr| attr[attribute_name] }
 
       raise TokenError.attribute_not_found token if attribute.blank?
