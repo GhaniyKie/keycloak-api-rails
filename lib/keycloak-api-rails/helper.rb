@@ -18,7 +18,7 @@ module Keycloak
       env[CURRENT_USER_ID_KEY] = decoded['sub']
     end
 
-    def self.decoded_token
+    def self.decoded_token(env)
       env[DECODED_TOKEN_KEY]
     end
 
@@ -26,7 +26,7 @@ module Keycloak
       env[DECODED_TOKEN_KEY] = decoded
     end
 
-    def self.current_authorized_party
+    def self.current_authorized_party(env)
       env[CURRENT_AUTHORIZED_PARTY_KEY]
     end
 
@@ -34,7 +34,7 @@ module Keycloak
       env[CURRENT_AUTHORIZED_PARTY_KEY] = decoded['azp']
     end
 
-    def self.current_user_email
+    def self.current_user_email(env)
       env[CURRENT_USER_EMAIL_KEY]
     end
 
@@ -42,7 +42,7 @@ module Keycloak
       env[CURRENT_USER_EMAIL_KEY] = decoded['email']
     end
 
-    def self.current_user_locale
+    def self.current_user_locale(env)
       env[CURRENT_USER_LOCALE_KEY]
     end
 
@@ -50,7 +50,7 @@ module Keycloak
       env[CURRENT_USER_LOCALE_KEY] = decoded['locale']
     end
 
-    def self.current_user_roles
+    def self.current_user_roles(env)
       env[ROLES_KEY]
     end
 
@@ -58,7 +58,7 @@ module Keycloak
       env[ROLES_KEY] = decoded.dig('realm_access', 'roles')
     end
 
-    def self.current_resource_roles
+    def self.current_resource_roles(env)
       env[RESOURCE_ROLES_KEY]
     end
 
@@ -75,7 +75,7 @@ module Keycloak
       env[CURRENT_USER_ATTRIBUTES] = decoded.select { |key, _value| attribute_names.include?(key) }
     end
 
-    def self.current_user_custom_attributes
+    def self.current_user_custom_attributes(env)
       env[CURRENT_USER_ATTRIBUTES]
     end
 
@@ -100,8 +100,8 @@ module Keycloak
       headers['HTTP_AUTHORIZATION']&.gsub(/^Bearer /, '') || ''
     end
 
-    def self.decoded_token_attribute(attribute_name)
-      attribute = decoded_token.select { |attr| attr[attribute_name] }
+    def self.decoded_token_attribute(env, attribute_name)
+      attribute = decoded_token(env).select { |attr| attr[attribute_name] }
 
       raise TokenError.attribute_not_found decoded_token if attribute.blank?
 
