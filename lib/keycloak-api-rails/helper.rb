@@ -102,7 +102,7 @@ module Keycloak
 
     def self.token_attribute(headers, attribute_name)
       token = read_token_from_headers(headers)
-      decoded_token = Keycloak.service.decode token
+      decoded_token = Keycloak.service.decode_and_verify(token)
       attribute = decoded_token.select { |attr| attr[attribute_name] }
 
       raise TokenError.attribute_not_found token if attribute.blank?

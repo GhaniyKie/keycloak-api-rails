@@ -8,16 +8,14 @@ module Keycloak
     end
 
     def decode_and_verify(token)
-      if token.nil? || token&.empty?
-        raise TokenError.no_token(token)
-      else
-        public_key    = @key_resolver.find_public_keys
-        decoded_token = JSON::JWT.decode(token, public_key)
+      raise TokenError.no_token(token) if token.nil? || token&.empty?
 
-        raise TokenError.expired(token) if expired?(decoded_token)
+      public_key    = @key_resolver.find_public_keys
+      decoded_token = JSON::JWT.decode(token, public_key)
 
-        decoded_token if decoded_token.verify!(public_key)
-      end
+      raise TokenError.expired(token) if expired?(decoded_token)
+
+      decoded_token if decoded_token.verify!(public_key)
     rescue JSON::JWT::VerificationFailed => e
       raise TokenError.verification_failed(token, e)
     rescue JSON::JWK::Set::KidNotFound => e
@@ -34,13 +32,6 @@ module Keycloak
       !should_skip?(method, path) && !is_preflight?(method, headers)
     end
 
-    # def decode(token)
-    #   public_key    = @key_resolver.find_public_keys
-    #   decoded_token = JSON::JWT.decode(token, public_key)
-
-    #   return decoded_token if decoded_token.verify! public_key
-    # end
-
     private
 
     def should_skip?(method, path)
@@ -55,7 +46,6 @@ module Keycloak
     end
 
     def expired?(token)
-      # token_expiration = Time.at(token.first['exp']).to_datetime
       token_expiration = Time.at(token['exp']).to_datetime
       token_expiration < Time.now + @token_expiration_tolerance_in_seconds.seconds
     end

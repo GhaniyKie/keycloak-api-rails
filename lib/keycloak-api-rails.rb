@@ -44,7 +44,7 @@ module Keycloak
     configure do |config|
       config.server_url                             = nil
       config.realm_id                               = nil
-      config.logger                                 = ::Logger.new(STDOUT)
+      config.logger                                 = ::Logger.new($stdout)
       config.skip_paths                             = {}
       config.token_expiration_tolerance_in_seconds  = 10
       config.public_key_cache_ttl                   = 86_400

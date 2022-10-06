@@ -21,3 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * New configuration option: `ca_certificate_file` (thanks to @@loicvigneron)
 * Access the token from ENV
 * Upgrade `json-jwt` to `1.11.0`
+
+## [2.0.0] - 2022-07-10
+
+* Update `Gemfile.lock` to avoid wrong CVE detections. The version of Rails should always be specified by the parent project. This change has no functional impact.
+* Update `json-jwt`
+* Change `require 'json-jwt'` to `require 'json/jwt'`
+* Change all helpers since decoded token not in Array form, but Hash
+* Make little refactoring in `service.rb`, `helper.rb`. Change version to 2.0.0 and update Changelog
