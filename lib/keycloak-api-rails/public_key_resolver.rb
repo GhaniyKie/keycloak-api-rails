@@ -6,8 +6,8 @@ module Keycloak
     end
 
     def find_public_keys
-      # JSON::JWK::Set.new(@http_client.get(@realm_id, "protocol/openid-connect/certs")["keys"])
-      OpenSSL::PKey::RSA.new("-----BEGIN PUBLIC KEY-----\n #{@http_client.get(@realm_id, '')['public_key']} \n-----END PUBLIC KEY-----\n")
+      JSON::JWK::Set.new(@http_client.get(@realm_id, 'protocol/openid-connect/certs')['keys'])
+      # OpenSSL::PKey::RSA.new("-----BEGIN PUBLIC KEY-----\n #{@http_client.get(@realm_id, '')['public_key']} \n-----END PUBLIC KEY-----\n")
     end
   end
 end
