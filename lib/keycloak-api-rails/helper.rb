@@ -15,7 +15,7 @@ module Keycloak
     end
 
     def self.assign_current_user_id(env, token)
-      env[CURRENT_USER_ID_KEY] = token.first['sub']
+      env[CURRENT_USER_ID_KEY] = token['sub']
     end
 
     def self.keycloak_token(env)
@@ -31,7 +31,7 @@ module Keycloak
     end
 
     def self.assign_current_authorized_party(env, token)
-      env[CURRENT_AUTHORIZED_PARTY_KEY] = token.first['azp']
+      env[CURRENT_AUTHORIZED_PARTY_KEY] = token['azp']
     end
 
     def self.current_user_email(env)
@@ -39,7 +39,7 @@ module Keycloak
     end
 
     def self.assign_current_user_email(env, token)
-      env[CURRENT_USER_EMAIL_KEY] = token.first['email']
+      env[CURRENT_USER_EMAIL_KEY] = token['email']
     end
 
     def self.current_user_locale(env)
@@ -47,7 +47,7 @@ module Keycloak
     end
 
     def self.assign_current_user_locale(env, token)
-      env[CURRENT_USER_LOCALE_KEY] = token.first['locale']
+      env[CURRENT_USER_LOCALE_KEY] = token['locale']
     end
 
     def self.current_user_roles(env)
@@ -55,7 +55,7 @@ module Keycloak
     end
 
     def self.assign_realm_roles(env, token)
-      env[ROLES_KEY] = token.first.dig('realm_access', 'roles')
+      env[ROLES_KEY] = token.dig('realm_access', 'roles')
     end
 
     def self.current_resource_roles(env)
@@ -63,13 +63,16 @@ module Keycloak
     end
 
     def self.assign_resource_roles(env, token)
-      env[RESOURCE_ROLES_KEY] = token.first.fetch('resource_access', {}).each_with_object({}) do |(name, resource_attributes), resource_roles|
+      env[RESOURCE_ROLES_KEY] = token.fetch('resource_access', {}).each_with_object({}) do |(name, resource_attributes), resource_roles|
         resource_roles[name] = resource_attributes.fetch('roles', [])
       end
+
+      # todo:
+      # env[RESOURCE_ROLES_KEY] = token.fetch('resource_access', {}).transform_values { |resource_attributes| resource_attributes.fetch('roles', []) }
     end
 
     def self.assign_current_user_custom_attributes(env, token, attribute_names)
-      env[CURRENT_USER_ATTRIBUTES] = token.first.select { |key, _value| attribute_names.include?(key) }
+      env[CURRENT_USER_ATTRIBUTES] = token.select { |key, _value| attribute_names.include?(key) }
     end
 
     def self.current_user_custom_attributes(env)
@@ -98,10 +101,13 @@ module Keycloak
     end
 
     def self.token_attribute(headers, attribute_name)
-      decoded_token = Keycloak.service.decode_and_verify(read_token_from_headers(headers))
-      raise TokenError.attribute_not_found(read_token_from_headers(headers)) if decoded_token.select { |attr| attr[attribute_name] }.empty?
+      token = read_token_from_headers(headers)
+      decoded_token = Keycloak.service.decode token
+      attribute = decoded_token.select { |attr| attr[attribute_name] }
 
-      { attribute_name => decoded_token.select { |attr| attr[attribute_name] }.first[attribute_name] }
+      raise TokenError.attribute_not_found token if attribute.blank?
+
+      attribute
     end
   end
 end

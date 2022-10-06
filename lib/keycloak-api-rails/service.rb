@@ -13,20 +13,16 @@ module Keycloak
       else
         public_key    = @key_resolver.find_public_keys
         decoded_token = JSON::JWT.decode(token, public_key)
-        # decoded_token = JWT.decode(token, public_key, true, { algorithm: 'RS256' })
-        if expired?(decoded_token)
-          raise TokenError.expired(token)
-        else
-          decoded_token.verify!(public_key)
-          # decoded_token
-        end
+
+        raise TokenError.expired(token) if expired?(decoded_token)
+
+        decoded_token.verify!(public_key)
       end
     rescue JSON::JWT::VerificationFailed => e
       raise TokenError.verification_failed(token, e)
     rescue JSON::JWK::Set::KidNotFound => e
       raise TokenError.verification_failed(token, e)
     rescue JSON::JWT::InvalidFormat
-    # rescue JWT::DecodeError => e
       raise TokenError.invalid_format(token, e)
     end
 
@@ -40,7 +36,9 @@ module Keycloak
 
     def decode(token)
       public_key    = @key_resolver.find_public_keys
-      JSON::JWT.decode(token, public_key)
+      decoded_token = JSON::JWT.decode(token, public_key)
+
+      return decoded_token if decoded_token.verify! public_key
     end
 
     private
