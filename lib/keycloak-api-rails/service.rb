@@ -38,10 +38,9 @@ module Keycloak
       !should_skip?(method, path) && !is_preflight?(method, headers)
     end
 
-    def token(token)
-      return nil if token.nil? || token.empty?
-
-      token
+    def decode(token)
+      public_key    = @key_resolver.find_public_keys
+      JSON::JWT.decode(token, public_key)
     end
 
     private
