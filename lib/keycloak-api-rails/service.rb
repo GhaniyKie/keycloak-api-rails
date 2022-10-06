@@ -16,7 +16,7 @@ module Keycloak
 
         raise TokenError.expired(token) if expired?(decoded_token)
 
-        decoded_token.verify!(public_key)
+        decoded_token if decoded_token.verify!(public_key)
       end
     rescue JSON::JWT::VerificationFailed => e
       raise TokenError.verification_failed(token, e)
@@ -34,12 +34,12 @@ module Keycloak
       !should_skip?(method, path) && !is_preflight?(method, headers)
     end
 
-    def decode(token)
-      public_key    = @key_resolver.find_public_keys
-      decoded_token = JSON::JWT.decode(token, public_key)
+    # def decode(token)
+    #   public_key    = @key_resolver.find_public_keys
+    #   decoded_token = JSON::JWT.decode(token, public_key)
 
-      return decoded_token if decoded_token.verify! public_key
-    end
+    #   return decoded_token if decoded_token.verify! public_key
+    # end
 
     private
 
