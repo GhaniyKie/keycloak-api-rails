@@ -38,6 +38,12 @@ module Keycloak
       !should_skip?(method, path) && !is_preflight?(method, headers)
     end
 
+    def token(token)
+      return nil if token.nil? || token.empty?
+
+      token
+    end
+
     private
 
     def should_skip?(method, path)
